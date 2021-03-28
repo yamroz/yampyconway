@@ -20,7 +20,7 @@ class YamConway:
 
     def run_simulation(self, turns, delay):
         self.initialize_seed(1)
-        for turn in range(turns):
+        for _ in range(turns):
             self.update_board(self.board1, self.board2)
             self.board1, self.board2 = self.board2, self.board1
             self.print_board_pretty(self.board1)
@@ -37,7 +37,7 @@ class YamConway:
         board = []
         for i in range(rows):
             board.append([])
-            for w in range(columns):
+            for _ in range(columns):
                 board[i].append(randrange(2) if randomize else 0)
         return board
 
@@ -88,6 +88,10 @@ class YamConway:
 
     @staticmethod
     def count_neighbours(board, row, cell):
+        """
+        This ugly, ugly MFer actually calculates number of alive neighbours around given cell.
+        This badly need refactor...
+        """
         length = len(board)
         width = len(board[0])
         result = 0
