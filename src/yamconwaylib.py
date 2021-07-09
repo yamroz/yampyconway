@@ -3,6 +3,9 @@ from random import seed, randrange
 
 
 class YamConway:
+    ALIVE_CELL_CHAR = '#'
+    EMPTY_CELL_CHAR = ' '
+
     def __init__(self, rows=20, columns=20, randomize=True):
         self.board1 = self.make_board(rows, columns, randomize)
         self.board2 = self.make_board(rows, columns, False)
@@ -45,17 +48,16 @@ class YamConway:
     def print_board(board):
         for row in range(len(board)):
             print(board[row])
-
-    @staticmethod
-    def print_board_pretty(board):
+    
+    def print_board_pretty(self, board):
         print("=" * len(board[0]))
         for row in board:
             row_repr = ""
             for cell in row:
                 if cell:
-                    row_repr = row_repr + "O"
+                    row_repr = row_repr + self.ALIVE_CELL_CHAR
                 else:
-                    row_repr = row_repr + "."
+                    row_repr = row_repr + self.EMPTY_CELL_CHAR
             print(row_repr)
 
     def get_network_board(self):
