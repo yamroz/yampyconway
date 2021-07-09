@@ -48,44 +48,44 @@ class ConBoard:
                         nbrs.append(self.cells[row_idx+1][col_idx]) #bottom
                         nbrs.append(self.cells[row_idx+1][col_idx+1]) #right bottom
                 #top row not corners
-                elif row_idx = 0 and col_idx > 0 and col_idx < self.columns_no - 1:
+                elif row_idx == 0 and col_idx > 0 and col_idx < self.columns_no - 1:
                         nbrs.append(self.cells[row_idx][col_idx-1]) #left
                         nbrs.append(self.cells[row_idx][col_idx+1]) #right
                         nbrs.append(self.cells[row_idx+1][col_idx-1]) #left bottom
                         nbrs.append(self.cells[row_idx+1][col_idx]) #bottom
                         nbrs.append(self.cells[row_idx+1][col_idx+1]) #right bottom
                 #bottom row not corners
-                elif row_idx=self.rows_no-1 and col_idx > 0 and col_idx < self.columns_no:
+                elif row_idx == self.rows_no-1 and col_idx > 0 and col_idx < self.columns_no:
                         nbrs.append(self.cells[row_idx-1][col_idx-1]) #left top
                         nbrs.append(self.cells[row_idx-1][col_idx]) #top
                         nbrs.append(self.cells[row_idx-1][col_idx+1]) #right top
                 #left edge not corners
-                elif col_idx = 0 and row_idx > 0 and row_idx < self.row_no - 1:
+                elif col_idx == 0 and row_idx > 0 and row_idx < self.row_no - 1:
                         nbrs.append(self.cells[row_idx-1][col_idx+1]) #right top
                         nbrs.append(self.cells[row_idx][col_idx+1]) #right
                         nbrs.append(self.cells[row_idx+1][col_idx+1]) #right bottom
                 #right edge not corners
-                elif col_idx = self.columns_no-1 and row_idx > 0 and row_idx<self.rows_no -1:
+                elif col_idx == self.columns_no-1 and row_idx > 0 and row_idx<self.rows_no -1:
                         nbrs.append(self.cells[row_idx-1][col_idx-1]) #left top
                         nbrs.append(self.cells[row_idx][col_idx-1]) #left
                         nbrs.append(self.cells[row_idx+1][col_idx-1]) #left bottom
                 #left top corner
-                elif row_idx=0 and col_idx = 0:
+                elif row_idx == 0 and col_idx == 0:
                         nbrs.append(self.cells[row_idx][col_idx+1]) #right
                         nbrs.append(self.cells[row_idx+1][col_idx+1]) #right bottom
                         nbrs.append(self.cells[row_idx+1][col_idx]) #bottom
                 #right top corner
-                elif row_idx=0 and col_idx=self.columns_no-1:
+                elif row_idx == 0 and col_idx == self.columns_no-1:
                         nbrs.append(self.cells[row_idx][col_idx-1]) #left
                         nbrs.append(self.cells[row_idx+1][col_idx-1]) #left bottom
                         nbrs.append(self.cells[row_idx+1][col_idx]) #bottom
                 #left bottom corner
-                elif row_idx=self.rows_no-1 and col_idx=0:
+                elif row_idx == self.rows_no-1 and col_idx == 0:
                         nbrs.append(self.cells[row_idx-1][col_idx]) #top
                         nbrs.append(self.cells[row_idx-1][col_idx+1]) #right top
                         nbrs.append(self.cells[row_idx][col_idx+1]) #right
                 #right bottom corner
-                elif row_idx=self.rows_no-1 and col_idx=self.columns_no-1:
+                elif row_idx == self.rows_no-1 and col_idx == self.columns_no-1:
                         nbrs.append(self.cells[row_idx-1][col_idx-1]) #left top
                         nbrs.append(self.cells[row_idx][col_idx-1]) #left                    
                         nbrs.append(self.cells[row_idx-1][col_idx]) #top
