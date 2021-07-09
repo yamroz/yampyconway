@@ -92,6 +92,11 @@ class ConBoard:
 
 
 class YamConway:
+    ALIVE_CELL_CHAR = '#'
+    EMPTY_CELL_CHAR = ' '
+    NR_OF_NBRS_TO_STARVE = 1
+    NR_OF_NBRS_TO_CREATE = 3
+
     def __init__(self, rows=20, columns=20, randomize=True):
         self.board1 = self.make_board(rows, columns, randomize)
         self.board2 = self.make_board(rows, columns, False)
@@ -133,17 +138,16 @@ class YamConway:
     def print_board(board):
         for row in range(len(board)):
             print(board[row])
-
-    @staticmethod
-    def print_board_pretty(board):
+    
+    def print_board_pretty(self, board):
         print("=" * len(board[0]))
         for row in board:
             row_repr = ""
             for cell in row:
                 if cell:
-                    row_repr = row_repr + "O"
+                    row_repr = row_repr + self.ALIVE_CELL_CHAR
                 else:
-                    row_repr = row_repr + "."
+                    row_repr = row_repr + self.EMPTY_CELL_CHAR
             print(row_repr)
 
     def get_network_board(self):
@@ -230,16 +234,16 @@ class YamConway:
         """
         neighbours = YamConway.count_neighbours(board, row, cell)
         if board[row][cell] == 1:  # cell is alive
-            if neighbours < 2:
+            if neighbours < self.NR_OF_NBRS_TO_STARVE:
                 self.stats.bury()
                 return 0
-            elif neighbours in (2, 3):
+            elif neighbours in (self.NR_OF_NBRS_TO_STARVE, self.NR_OF_NBRS_TO_CREATE):
                 return 1
             else:
                 self.stats.bury()
                 return 0
         else:  # no cell
-            if neighbours == 3:
+            if neighbours == self.NR_OF_NBRS_TO_CREATE:
                 self.stats.born()
                 return 1
             else:
