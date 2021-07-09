@@ -1,6 +1,95 @@
 from time import sleep
 from random import seed, randrange
 
+class Cell:
+    neighbors=[]
+    alive = False
+    def __init__(self, randomize=True):
+        if randomize:
+            self.alive=randrange(2)
+
+class ConBoard:
+    columns_no, rows_no = 16, 16
+    cells = []
+    def __init__(self, columns_no = 32, rows_no = 32, randomize=True):
+        self.columns_no = columns_no
+        self.rows_no = rows_no
+        self._make_cells(randomize)
+        self._connect_neighbours()
+
+    def _make_cells(self, randomize=True):
+        """
+        Spawn new cells into array that will be our board.
+        """
+        for new_row_no in self.rows_no:
+            self.cells.append([])
+            for new_col_no in self.columns_no:
+                self.cells[new_row_no].append(Cell(randomize))
+            
+    def _connect_neighbours(self):
+        """
+        Each cell has to have list of neighbors to collect information about.
+        This method will create such lists.
+        To make it efficient the each cell will be examined to put it's reference to correct
+        neighbor list.
+        """
+        for row_idx in self.rows_no:
+            for col_idx in self.columns_no:
+                nbrs = self.cells[row_idx][col_idx].neighbors #get neighbors for convenience
+                #lets firs take cells not on edges
+                if (row_idx > 0 and row_idx < self.rows_no - 1 and
+                    col_idx > 0 and col_idx < self.columns_no - 1):
+                        nbrs.append(self.cells[row_idx-1][col_idx-1]) #left top
+                        nbrs.append(self.cells[row_idx-1][col_idx]) #top
+                        nbrs.append(self.cells[row_idx-1][col_idx+1]) #right top
+                        nbrs.append(self.cells[row_idx][col_idx-1]) #left
+                        nbrs.append(self.cells[row_idx][col_idx+1]) #right
+                        nbrs.append(self.cells[row_idx+1][col_idx-1]) #left bottom
+                        nbrs.append(self.cells[row_idx+1][col_idx]) #bottom
+                        nbrs.append(self.cells[row_idx+1][col_idx+1]) #right bottom
+                #top row not corners
+                elif row_idx=0 and col_idx > 0 and col_idx < self.columns_no - 1:
+                        nbrs.append(self.cells[row_idx][col_idx-1]) #left
+                        nbrs.append(self.cells[row_idx][col_idx+1]) #right
+                        nbrs.append(self.cells[row_idx+1][col_idx-1]) #left bottom
+                        nbrs.append(self.cells[row_idx+1][col_idx]) #bottom
+                        nbrs.append(self.cells[row_idx+1][col_idx+1]) #right bottom
+                #bottom row not corners
+                elif row_idx=self.rows_no-1 and col_idx > 0 and col_idx < self.columns_no:
+                        nbrs.append(self.cells[row_idx-1][col_idx-1]) #left top
+                        nbrs.append(self.cells[row_idx-1][col_idx]) #top
+                        nbrs.append(self.cells[row_idx-1][col_idx+1]) #right top
+                #left edge not corners
+                elif col_idx = 0 and row_idx > 0 and row_idx < self.row_no - 1:
+                        nbrs.append(self.cells[row_idx-1][col_idx+1]) #right top
+                        nbrs.append(self.cells[row_idx][col_idx+1]) #right
+                        nbrs.append(self.cells[row_idx+1][col_idx+1]) #right bottom
+                #right edge not corners
+                elif col_idx = self.columns_no-1 and row_idx > 0 and row_idx<self.rows_no -1:
+                        nbrs.append(self.cells[row_idx-1][col_idx-1]) #left top
+                        nbrs.append(self.cells[row_idx][col_idx-1]) #left
+                        nbrs.append(self.cells[row_idx+1][col_idx-1]) #left bottom
+                #left top corner
+                elif row_idx=0 and col_idx = 0:
+                        nbrs.append(self.cells[row_idx][col_idx+1]) #right
+                        nbrs.append(self.cells[row_idx+1][col_idx+1]) #right bottom
+                        nbrs.append(self.cells[row_idx+1][col_idx]) #bottom
+                #right top corner
+                elif row_idx=0 and col_idx=self.columns_no-1:
+                        nbrs.append(self.cells[row_idx][col_idx-1]) #left
+                        nbrs.append(self.cells[row_idx+1][col_idx-1]) #left bottom
+                        nbrs.append(self.cells[row_idx+1][col_idx]) #bottom
+                #left bottom corner
+                elif row_idx=self.rows_no-1 and col_idx=0:
+                        nbrs.append(self.cells[row_idx-1][col_idx]) #top
+                        nbrs.append(self.cells[row_idx-1][col_idx+1]) #right top
+                        nbrs.append(self.cells[row_idx][col_idx+1]) #right
+                #right bottom corner
+                elif row_idx=self.rows_no-1 and col_idx=self.columns_no-1:
+                        nbrs.append(self.cells[row_idx-1][col_idx-1]) #left top
+                        nbrs.append(self.cells[row_idx][col_idx-1]) #left                    
+                        nbrs.append(self.cells[row_idx-1][col_idx]) #top
+
 
 class YamConway:
     def __init__(self, rows=20, columns=20, randomize=True):
@@ -32,8 +121,7 @@ class YamConway:
     def initialize_seed(seed_value):
         seed(seed_value)
 
-    @staticmethod
-    def make_board(rows=20, columns=20, randomize=True):
+    def make_board(self, rows=20, columns=20, randomize=True):
         board = []
         for i in range(rows):
             board.append([])
