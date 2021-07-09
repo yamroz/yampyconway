@@ -48,7 +48,7 @@ class ConBoard:
                         nbrs.append(self.cells[row_idx+1][col_idx]) #bottom
                         nbrs.append(self.cells[row_idx+1][col_idx+1]) #right bottom
                 #top row not corners
-                elif row_idx=0 and col_idx > 0 and col_idx < self.columns_no - 1:
+                elif row_idx = 0 and col_idx > 0 and col_idx < self.columns_no - 1:
                         nbrs.append(self.cells[row_idx][col_idx-1]) #left
                         nbrs.append(self.cells[row_idx][col_idx+1]) #right
                         nbrs.append(self.cells[row_idx+1][col_idx-1]) #left bottom
