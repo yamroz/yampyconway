@@ -61,7 +61,7 @@ while conn:
             r = int(data[4:data.find('x')])
             c = int(data[data.find('x')+1:])
             # print("Creating board {} x {}".Format(r, c))
-            yc = YamConway(rows=r, columns=c)  # This is our simulation
+            yc = YamConway(rows=r, cells_in_row=c)  # This is our simulation
         except:
             conn.close()
             s.close()
