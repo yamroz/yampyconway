@@ -121,6 +121,7 @@ class YamConway:
     EMPTY_CELL_CHAR = '-'
     NR_OF_NBRS_TO_STARVE = 2
     NR_OF_NBRS_TO_CREATE = 3
+    step = 0
     presentation = None
 
     class Presentation(Enum):
@@ -152,7 +153,7 @@ class YamConway:
             print(f'born {self.births} died {self.deaths}')
 
     def run_simulation(self, turns, delay, presentation=Presentation.PRETTY):
-        self.initialize_seed(1)
+        seed(1)
         self.print_conboard_nbrs(self.board1)
         print('*********** START ***********')
         for _ in range(turns):
@@ -166,17 +167,13 @@ class YamConway:
         print('Born {} Died {}'.format(self.stats.births, self.stats.deaths))
 
     @staticmethod
-    def initialize_seed(seed_value):
-        seed(seed_value)
-
-    @staticmethod
     def print_board(board):
         for row in range(len(board)):
             print(board[row])
 
     def print_conboard_pretty(self, board: ConBoard):
         print("=" * len(board.cells))
-        print(f'{board.name} {board.alive_cells()}')
+        print(f'{board.name} {board.alive_cells()} step {self.step}')
         for row in board.cells:
             row_repr = ""
             for cell in row:
@@ -188,7 +185,7 @@ class YamConway:
 
     def print_conboard_nbrs(self, board: ConBoard):
         print("=" * len(board.cells))
-        print(f'{board.name} {board.alive_cells()}')
+        print(f'{board.name} {board.alive_cells()} step {self.step}')
         for row in board.cells:
             row_repr = ""
             for cell in row:
@@ -233,12 +230,16 @@ class YamConway:
                     else:
                         target_board.cells[row_index][cell_index].setAlive(False)
                         self.stats.bury()
-                elif alive_nbrs == self.NR_OF_NBRS_TO_CREATE:
+                else:
+                    if alive_nbrs == self.NR_OF_NBRS_TO_CREATE:
                         target_board.cells[row_index][cell_index].setAlive(True)
                         self.stats.born()
+                    else:
+                        target_board.cells[row_index][cell_index].setAlive(False)
 
     def next_turn(self):
         self.update_conboard(self.board1, self.board2)
+        self.step += 1
         temp_board = self.board2
         self.board2 = self.board1
         self.board1 = temp_board
