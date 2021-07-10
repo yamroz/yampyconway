@@ -1,9 +1,10 @@
 from time import sleep
 from random import seed, choice
+from enum import Enum   
 
 class Cell:
     neighbors = None
-    alive = False
+    alive: bool = False
     def __init__(self, randomize=True):
         if randomize:
             self.alive = choice([True,False])
@@ -24,11 +25,18 @@ class ConBoard:
         self.name = name
         self.cells_in_row = cells_in_row
         self.rows_no = rows_no
-        self.cells = []
+        self.cells: Cell = []
         self._make_cells(randomize)
         self._connect_neighbours()
+    
+    def alive_cells(self):
+        res = 0
+        for row in self.cells:
+            for cell in row:
+                if cell.alive:
+                    res += 1
+        return res
         
-
     def _make_cells(self, randomize=True):
         for new_row_no in range(self.rows_no):
             self.cells.append([])
@@ -65,20 +73,26 @@ class ConBoard:
                             nbrs.append(self.cells[row_idx+1][col_idx]) #bottom
                             nbrs.append(self.cells[row_idx+1][col_idx+1]) #right bottom
                     #bottom row not corners
-                    elif row_idx == self.rows_no-1 and col_idx > 0 and col_idx < self.cells_in_row - 1:
+                    elif row_idx == self.rows_no - 1 and col_idx > 0 and col_idx < self.cells_in_row - 1:
+                            nbrs.append(self.cells[row_idx][col_idx-1]) #left
                             nbrs.append(self.cells[row_idx-1][col_idx-1]) #left top
                             nbrs.append(self.cells[row_idx-1][col_idx]) #top
                             nbrs.append(self.cells[row_idx-1][col_idx+1]) #right top
+                            nbrs.append(self.cells[row_idx][col_idx+1]) #right
                     #left edge not corners
                     elif col_idx == 0 and row_idx > 0 and row_idx < self.rows_no - 1:
+                            nbrs.append(self.cells[row_idx-1][col_idx]) #top
                             nbrs.append(self.cells[row_idx-1][col_idx+1]) #right top
                             nbrs.append(self.cells[row_idx][col_idx+1]) #right
                             nbrs.append(self.cells[row_idx+1][col_idx+1]) #right bottom
+                            nbrs.append(self.cells[row_idx+1][col_idx]) #bottom
                     #right edge not corners
                     elif col_idx == self.cells_in_row-1 and row_idx > 0 and row_idx<self.rows_no -1:
+                            nbrs.append(self.cells[row_idx-1][col_idx]) #top
                             nbrs.append(self.cells[row_idx-1][col_idx-1]) #left top
                             nbrs.append(self.cells[row_idx][col_idx-1]) #left
                             nbrs.append(self.cells[row_idx+1][col_idx-1]) #left bottom
+                            nbrs.append(self.cells[row_idx+1][col_idx]) #bottom
                     #left top corner
                     elif row_idx == 0 and col_idx == 0:
                             nbrs.append(self.cells[row_idx][col_idx+1]) #right
@@ -104,14 +118,22 @@ class ConBoard:
 
 class YamConway:
     ALIVE_CELL_CHAR = '#'
-    EMPTY_CELL_CHAR = ' '
+    EMPTY_CELL_CHAR = '-'
     NR_OF_NBRS_TO_STARVE = 2
     NR_OF_NBRS_TO_CREATE = 3
+    presentation = None
 
-    def __init__(self, rows = 20, cells_in_row=20, randomize=True):
+    class Presentation(Enum):
+        PRETTY=1
+        NUMBERS=2
+
+    def __init__(self, rows = 20, cells_in_row=20, randomize=True, presentation=Presentation.PRETTY):
         self.board1 = ConBoard(rows_no=rows,cells_in_row=cells_in_row, randomize=True, name = 'board1')
         self.board2 = ConBoard(rows_no=rows,cells_in_row=cells_in_row, randomize=False, name = 'board2')
         self.stats = YamConway.YamConStats()
+        self.presentation = presentation
+
+
 
     class YamConStats:
         verbose = False
@@ -129,14 +151,16 @@ class YamConway:
         def _verbose(self):
             print(f'born {self.births} died {self.deaths}')
 
-    def run_simulation(self, turns, delay):
+    def run_simulation(self, turns, delay, presentation=Presentation.PRETTY):
         self.initialize_seed(1)
-        self.print_conboard_pretty(self.board1)
-        self.print_conboard_pretty(self.board2)
+        self.print_conboard_nbrs(self.board1)
         print('*********** START ***********')
         for _ in range(turns):
             self.next_turn()
-            self.print_conboard_pretty(self.board1)
+            if self.presentation == self.Presentation.PRETTY:
+                self.print_conboard_pretty(self.board1)
+            elif self.presentation == self.Presentation.NUMBERS:
+                self.print_conboard_nbrs(self.board1)
             sleep(delay)
         print('Stats:')
         print('Born {} Died {}'.format(self.stats.births, self.stats.deaths))
@@ -152,12 +176,24 @@ class YamConway:
 
     def print_conboard_pretty(self, board: ConBoard):
         print("=" * len(board.cells))
-        print(board.name)
+        print(f'{board.name} {board.alive_cells()}')
         for row in board.cells:
             row_repr = ""
             for cell in row:
                 if cell.alive:
                     row_repr = row_repr + self.ALIVE_CELL_CHAR
+                else:
+                    row_repr = row_repr + self.EMPTY_CELL_CHAR
+            print(row_repr)
+
+    def print_conboard_nbrs(self, board: ConBoard):
+        print("=" * len(board.cells))
+        print(f'{board.name} {board.alive_cells()}')
+        for row in board.cells:
+            row_repr = ""
+            for cell in row:
+                if cell.alive:
+                    row_repr = row_repr + str(cell.count_alive_neighbors())
                 else:
                     row_repr = row_repr + self.EMPTY_CELL_CHAR
             print(row_repr)
@@ -189,16 +225,17 @@ class YamConway:
             for cell_index, cell in enumerate(row):
                 alive_nbrs = cell.count_alive_neighbors()
                 if cell.alive:
-                    if alive_nbrs < self.NR_OF_NBRS_TO_STARVE or alive_nbrs > self.NR_OF_NBRS_TO_CREATE:
-                        self.stats.bury()
+                    if alive_nbrs < self.NR_OF_NBRS_TO_STARVE:
                         target_board.cells[row_index][cell_index].setAlive(False)
+                        self.stats.bury()
+                    elif alive_nbrs >=self.NR_OF_NBRS_TO_STARVE and alive_nbrs <= self.NR_OF_NBRS_TO_CREATE:
+                        target_board.cells[row_index][cell_index].setAlive(True)
                     else:
+                        target_board.cells[row_index][cell_index].setAlive(False)
+                        self.stats.bury()
+                elif alive_nbrs == self.NR_OF_NBRS_TO_CREATE:
                         target_board.cells[row_index][cell_index].setAlive(True)
-                else:
-                    if alive_nbrs == self.NR_OF_NBRS_TO_CREATE:
                         self.stats.born()
-                        target_board.cells[row_index][cell_index].setAlive(True)
-
 
     def next_turn(self):
         self.update_conboard(self.board1, self.board2)
