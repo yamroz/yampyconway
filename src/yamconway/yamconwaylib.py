@@ -47,7 +47,7 @@ class ConBoard:
         """
         Each cell has to have list of neighbors to collect information about.
         This method will create such lists.
-        To make it efficient the each cell will be examined to put it's reference to correct
+        To make it efficient each cell will be examined to put it's reference to correct
         neighbor list.
         """
         for row_idx in range(self.rows_no):
@@ -113,7 +113,6 @@ class ConBoard:
                             nbrs.append(self.cells[row_idx-1][col_idx-1]) #left top
                             nbrs.append(self.cells[row_idx][col_idx-1]) #left                    
                             nbrs.append(self.cells[row_idx-1][col_idx]) #top
-                #print(f'connected {len(nbrs)} neighbors in cell {row_idx},{col_idx}', )
 
 
 class YamConway:
