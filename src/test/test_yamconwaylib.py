@@ -1,5 +1,5 @@
 import pytest
-from yamconway.yamconwaylib import *
+from yamconway.yamconway import *
 
 
 @pytest.fixture
