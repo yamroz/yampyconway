@@ -1,3 +1,5 @@
+import array
+import os
 from random import choice
 from typing import Iterator
 
@@ -18,7 +20,6 @@ class Cell:
 
     def count_alive_neighbors(self):
         return sum(n.alive for n in self.neighbors)
-
 
 class ConnectedBoard:
     ALIVE_CELL_CHAR = '#'
@@ -158,3 +159,15 @@ class ConnectedBoard:
                 for char_idx, character in enumerate(row.rstrip()):
                     self.cells[row_idx][char_idx].setAlive(
                         character != dead_marker)
+
+    def save_to_file(self, file_path_name:str):
+        with open(file_path_name,'w') as output_file:
+            output_file.write(self.EMPTY_CELL_CHAR)
+            for row in self.cells:
+                row_to_write = ''
+                for cell in row:
+                    if cell.alive:
+                        row_to_write = row_to_write + self.ALIVE_CELL_CHAR
+                    else:
+                        row_to_write = row_to_write + self.EMPTY_CELL_CHAR
+                output_file.write('\n' + row_to_write)
