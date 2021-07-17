@@ -44,7 +44,7 @@ class YamConway:
         def _verbose(self):
             print(f'born {self.births} died {self.deaths}')
 
-    def run_simulation(self, turns, delay, presentation=Presentation.PRETTY):
+    def run_simulation_with_console_output(self, turns, delay):
         seed(1)
         self.print_conboard_nbrs(self.board1)
         print('*********** START ***********')
