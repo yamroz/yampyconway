@@ -65,7 +65,7 @@ class YamConway:
 
     def print_conboard_pretty(self, board: ConnectedBoard):
         print("=" * len(board.cells))
-        print(f'{board.name} {board.alive_cells()} step {self.step}')
+        print(f'{board.name} {board.count_alive_cells()} step {self.step}')
         for row in board.cells:
             row_repr = ""
             for cell in row:
@@ -77,7 +77,7 @@ class YamConway:
 
     def print_conboard_nbrs(self, board: ConnectedBoard):
         print("=" * len(board.cells))
-        print(f'{board.name} {board.alive_cells()} step {self.step}')
+        print(f'{board.name} {board.count_alive_cells()} step {self.step}')
         for row in board.cells:
             row_repr = ""
             for cell in row:
