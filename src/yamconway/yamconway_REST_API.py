@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_restful import Resource, Api
-from yamconwaylib import YamConway
+from yamconway import YamConway
 
 app = Flask(__name__)
 api = Api(app)

@@ -1,6 +1,6 @@
 import socket
 import sys
-from yamconwaylib import YamConway
+from yamconway import YamConway
 from time import sleep
 
 
