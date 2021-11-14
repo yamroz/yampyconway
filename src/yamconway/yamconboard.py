@@ -22,9 +22,6 @@ class Cell:
         return sum(n.alive for n in self.neighbors)
 
 class ConnectedBoard:
-    ALIVE_CELL_CHAR = '#'
-    EMPTY_CELL_CHAR = '-'
-
     def __init__(self, name: str = 'no_name', rows_no: int = 16, cells_in_row: int = 16, randomize: bool = True):
         self.name = name
         self.cells_in_row = cells_in_row
@@ -136,18 +133,6 @@ class ConnectedBoard:
                         nbrs.append(self.cells[row_idx][col_idx-1])  # left
                         nbrs.append(self.cells[row_idx-1][col_idx])  # top
 
-    def print_conboard_pretty(self):
-        print("=" * len(self.cells))
-        print(f'{self.name} {self.count_alive_cells()}')
-        for row in self.cells:
-            row_repr = ""
-            for cell in row:
-                if cell.alive:
-                    row_repr = row_repr + self.ALIVE_CELL_CHAR
-                else:
-                    row_repr = row_repr + self.EMPTY_CELL_CHAR
-            print(row_repr)
-
     def load_from_file(self, path_to_file: str = None):
         with open(path_to_file) as specimen:
             dead_marker = specimen.readline().rstrip()
@@ -160,6 +145,7 @@ class ConnectedBoard:
                     self.cells[row_idx][char_idx].setAlive(
                         character != dead_marker)
 
+    @DeprecationWarning
     def save_to_file(self, file_path_name:str):
         with open(file_path_name,'w') as output_file:
             output_file.write(self.EMPTY_CELL_CHAR)

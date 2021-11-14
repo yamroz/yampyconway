@@ -14,11 +14,11 @@ class YamConway:
     board1: ConnectedBoard = None
     board2: ConnectedBoard = None
 
-    class Presentation(Enum):
+    class PresentationType(Enum):
         PRETTY = 1
         NUMBERS = 2
 
-    def __init__(self, rows=20, cells_in_row=20, randomize=True, presentation=Presentation.PRETTY):
+    def __init__(self, rows=20, cells_in_row=20, randomize=True, presentation=PresentationType.PRETTY):
         self.board1 = ConnectedBoard(
             rows_no=rows, cells_in_row=cells_in_row, randomize=True, name='board1')
         self.board2 = ConnectedBoard(
@@ -31,12 +31,12 @@ class YamConway:
         births = 0
         deaths = 0
 
-        def bury(self):
+        def cell_died(self):
             self.deaths = self.deaths + 1
             if self.verbose:
                 self._verbose()
 
-        def born(self):
+        def cell_was_born(self):
             self.births = self.births + 1
             if self.verbose:
                 self._verbose()
@@ -50,9 +50,9 @@ class YamConway:
         print('*********** START ***********')
         for _ in range(turns):
             self.next_turn()
-            if self.presentation == self.Presentation.PRETTY:
+            if self.presentation == self.PresentationType.PRETTY:
                 self.print_conboard_pretty(self.board1)
-            elif self.presentation == self.Presentation.NUMBERS:
+            elif self.presentation == self.PresentationType.NUMBERS:
                 self.print_conboard_nbrs(self.board1)
             sleep(delay)
         print('Stats:')
@@ -117,19 +117,19 @@ class YamConway:
                     if alive_nbrs < self.NR_OF_NBRS_TO_STARVE:
                         target_board.cells[row_index][cell_index].setAlive(
                             False)
-                        self.stats.bury()
+                        self.stats.cell_died()
                     elif alive_nbrs >= self.NR_OF_NBRS_TO_STARVE and alive_nbrs <= self.NR_OF_NBRS_TO_CREATE:
                         target_board.cells[row_index][cell_index].setAlive(
                             True)
                     else:
                         target_board.cells[row_index][cell_index].setAlive(
                             False)
-                        self.stats.bury()
+                        self.stats.cell_died()
                 else:
                     if alive_nbrs == self.NR_OF_NBRS_TO_CREATE:
                         target_board.cells[row_index][cell_index].setAlive(
                             True)
-                        self.stats.born()
+                        self.stats.cell_was_born()
                     else:
                         target_board.cells[row_index][cell_index].setAlive(
                             False)
