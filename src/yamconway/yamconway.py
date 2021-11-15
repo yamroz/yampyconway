@@ -67,13 +67,16 @@ class YamConway:
         print("=" * len(board.cells))
         print(f'{board.name} {board.alive_cells()} step {self.step}')
         for row in board.cells:
-            row_repr = ""
-            for cell in row:
-                if cell.alive:
-                    row_repr = row_repr + self.ALIVE_CELL_CHAR
-                else:
-                    row_repr = row_repr + self.EMPTY_CELL_CHAR
-            print(row_repr)
+            self._print_row_pretty(row)
+
+    def _print_row_pretty(self, row):
+        row_repr = ""
+        for cell in row:
+            if cell.alive:
+                row_repr = row_repr + self.ALIVE_CELL_CHAR
+            else:
+                row_repr = row_repr + self.EMPTY_CELL_CHAR
+        print(row_repr)
 
     def print_conboard_nbrs(self, board: ConnectedBoard):
         print("=" * len(board.cells))
