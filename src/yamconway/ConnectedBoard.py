@@ -22,24 +22,19 @@ class Cell:
         return sum(n.alive for n in self.neighbors)
 
 class ConnectedBoard:
+    """
+    This class stores board with each cell containing list of neighbours.
+    """
+
     def __init__(self, name: str = 'no_name', rows_no: int = 16, cells_in_row: int = 16, randomize: bool = True):
         self.name = name
         self.cells_in_row = cells_in_row
         self.rows_no = rows_no
-        self._init_cells(randomize)
-
-    def _init_cells(self, randomize: bool = True):
         self.cells: Cell = []
         self._make_cells(randomize)
         self._connect_neighbours()
 
-    def count_alive_cells(self):
-        res = 0
-        for row in self.cells:
-            for cell in row:
-                if cell.alive:
-                    res += 1
-        return res
+
 
     def _make_cells(self, randomize=True):
         for new_row_no in range(self.rows_no):
@@ -133,6 +128,15 @@ class ConnectedBoard:
                         nbrs.append(self.cells[row_idx][col_idx-1])  # left
                         nbrs.append(self.cells[row_idx-1][col_idx])  # top
 
+    def count_alive_cells(self):
+        res = 0
+        for row in self.cells:
+            for cell in row:
+                if cell.alive:
+                    res += 1
+        return res
+
+    @DeprecationWarning
     def load_from_file(self, path_to_file: str = None):
         with open(path_to_file) as specimen:
             dead_marker = specimen.readline().rstrip()
@@ -157,27 +161,3 @@ class ConnectedBoard:
                     else:
                         row_to_write = row_to_write + self.EMPTY_CELL_CHAR
                 output_file.write('\n' + row_to_write)
-
-class ConnectedBoardFactory:
-    
-    def __init__(self):
-        pass
-
-    @staticmethod
-    def getConnectedBoard() -> ConnectedBoard:
-        return ConnectedBoard( )
-
-    @staticmethod
-    def loadFromFile(path_to_file:str) -> ConnectedBoard:
-        newBoard = ConnectedBoardFactory.getConnectedBoard()
-        with open(path_to_file) as specimen:
-            dead_marker = specimen.readline().rstrip()
-            data = specimen.readlines()
-            newBoard.rows_no = len(data)
-            newBoard.cells_in_row = len(data[0].rstrip())
-            newBoard._init_cells(randomize=False)
-            for row_idx, row in enumerate(data):
-                for char_idx, character in enumerate(row.rstrip()):
-                    newBoard.cells[row_idx][char_idx].setAlive(
-                        character != dead_marker)
-        return newBoard
