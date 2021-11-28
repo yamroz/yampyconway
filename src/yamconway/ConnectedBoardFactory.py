@@ -1,6 +1,4 @@
-
-
-from yamconway.connectedboard import ConnectedBoard
+from yamconway.ConnectedBoard import ConnectedBoard
 from yamconway.yamconboardio import YamConnBoardIO
 
 

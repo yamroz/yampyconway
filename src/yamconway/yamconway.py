@@ -1,7 +1,7 @@
 from time import sleep
 from random import seed
 from enum import Enum
-from yamconway.connectedboard import ConnectedBoard
+from yamconway.ConnectedBoard import ConnectedBoard
 
 
 class YamConway:
