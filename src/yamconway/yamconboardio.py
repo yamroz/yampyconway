@@ -1,4 +1,4 @@
-from yamconway.connectedboard import ConnectedBoard
+from yamconway.ConnectedBoard import ConnectedBoard
 
 class YamConnBoardIO:
     def __init__():

@@ -1,7 +1,7 @@
 import pytest
 from os import getcwd
 
-from yamconway.connectedboard import ConnectedBoard
+from yamconway.ConnectedBoard import ConnectedBoard
 from yamconway.ConnectedBoardFactory import ConnectedBoardFactory
 
 

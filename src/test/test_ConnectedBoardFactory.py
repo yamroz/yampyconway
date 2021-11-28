@@ -1,5 +1,5 @@
 from yamconway.ConnectedBoardFactory import ConnectedBoardFactory
-from yamconway.connectedboard import ConnectedBoard
+from yamconway.ConnectedBoard import ConnectedBoard
 
 
 def test_getConnectedBoard():
