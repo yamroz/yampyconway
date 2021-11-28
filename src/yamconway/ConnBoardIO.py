@@ -1,6 +1,6 @@
 from yamconway.ConnectedBoard import ConnectedBoard
 
-class YamConnBoardIO:
+class ConnBoardIO:
     def __init__():
         pass
 

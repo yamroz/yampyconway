@@ -1,5 +1,5 @@
 from yamconway.ConnectedBoard import ConnectedBoard
-from yamconway.yamconboardio import YamConnBoardIO
+from yamconway.ConnBoardIO import ConnBoardIO
 
 
 class ConnectedBoardFactory:
@@ -10,8 +10,13 @@ class ConnectedBoardFactory:
     @staticmethod
     def getConnectedBoard() -> ConnectedBoard:
         return ConnectedBoard()
+    
+    @staticmethod
+    def getCleanConnectedBoard() -> ConnectedBoard:
+        return ConnectedBoard(randomize=False)
 
+    @staticmethod
     def loadFromFile(path_to_file:str) -> ConnectedBoard:
         connBoard = ConnectedBoard()
-        YamConnBoardIO.load_from_file(connBoard,path_to_file)
+        ConnBoardIO.load_from_file(connBoard,path_to_file)
         return connBoard

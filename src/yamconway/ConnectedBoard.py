@@ -48,7 +48,7 @@ class ConnectedBoard:
             for _ in range(self.cells_in_row):
                 self.cells[new_row_no].append(Cell(randomize))
 
-    def _connect_neighbours(self):
+    def _connect_neighbours(self) -> None:
         """
         Each cell has to have list of neighbors to collect information about.
         This method will create such lists.
@@ -134,36 +134,10 @@ class ConnectedBoard:
                         nbrs.append(self.cells[row_idx][col_idx-1])  # left
                         nbrs.append(self.cells[row_idx-1][col_idx])  # top
 
-    def count_alive_cells(self):
+    def count_alive_cells(self) -> int:
         res = 0
         for row in self.cells:
             for cell in row:
                 if cell.alive:
                     res += 1
         return res
-
-    @DeprecationWarning
-    def load_from_file(self, path_to_file: str = None):
-        with open(path_to_file) as specimen:
-            dead_marker = specimen.readline().rstrip()
-            data = specimen.readlines()
-            self.rows_no = len(data)
-            self.cells_in_row = len(data[0].rstrip())
-            self._init_cells(randomize=False)
-            for row_idx, row in enumerate(data):
-                for char_idx, character in enumerate(row.rstrip()):
-                    self.cells[row_idx][char_idx].setAlive(
-                        character != dead_marker)
-
-    @DeprecationWarning
-    def save_to_file(self, file_path_name:str):
-        with open(file_path_name,'w') as output_file:
-            output_file.write(self.EMPTY_CELL_CHAR)
-            for row in self.cells:
-                row_to_write = ''
-                for cell in row:
-                    if cell.alive:
-                        row_to_write = row_to_write + self.ALIVE_CELL_CHAR
-                    else:
-                        row_to_write = row_to_write + self.EMPTY_CELL_CHAR
-                output_file.write('\n' + row_to_write)

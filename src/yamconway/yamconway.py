@@ -4,7 +4,7 @@ from enum import Enum
 from yamconway.ConnectedBoard import ConnectedBoard
 
 
-class YamConway:
+class SimulationHQ:
     ALIVE_CELL_CHAR = '#'
     EMPTY_CELL_CHAR = '-'
     NR_OF_NBRS_TO_STARVE = 2
@@ -23,7 +23,7 @@ class YamConway:
             rows_no=rows, cells_in_row=cells_in_row, randomize=True, name='board1')
         self.board2 = ConnectedBoard(
             rows_no=rows, cells_in_row=cells_in_row, randomize=False, name='board2')
-        self.stats = YamConway.YamConStats()
+        self.stats = SimulationHQ.YamConStats()
         self.presentation = presentation
 
     class YamConStats:
