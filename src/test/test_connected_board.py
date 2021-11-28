@@ -1,7 +1,8 @@
 import pytest
 from os import getcwd
 
-from yamconway.yamconboard import ConnectedBoard, ConnectedBoardFactory
+from yamconway.connectedboard import ConnectedBoard
+from yamconway.ConnectedBoardFactory import ConnectedBoardFactory
 
 
 @pytest.fixture

@@ -1,6 +1,6 @@
-from ConnectedBoard import ConnectedBoard
+from yamconway.connectedboard import ConnectedBoard
 
-class yamconboardio:
+class YamConnBoardIO:
     def __init__():
         pass
 
@@ -11,7 +11,8 @@ class yamconboardio:
             data = specimen.readlines()
             board.rows_no = len(data)
             board.cells_in_row = len(data[0].rstrip())
-            board._init_cells(randomize=False)
+            #board._init_cells(randomize=False)
+            board._make_cells(randomize=False)
             for row_idx, row in enumerate(data):
                 for char_idx, character in enumerate(row.rstrip()):
                     board.cells[row_idx][char_idx].setAlive(
