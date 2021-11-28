@@ -34,7 +34,13 @@ class ConnectedBoard:
         self._make_cells(randomize)
         self._connect_neighbours()
 
-
+    def reset_cells(self):
+        """
+        Deletes Cells collection and sets widtdh and height to 0
+        """
+        self.cells: Cell = []
+        self.rows_no = 0
+        self.cells_in_row = 0
 
     def _make_cells(self, randomize=True):
         for new_row_no in range(self.rows_no):

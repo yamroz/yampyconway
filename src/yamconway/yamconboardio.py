@@ -9,6 +9,7 @@ class YamConnBoardIO:
         with open(path_to_file) as specimen:
             dead_marker = specimen.readline().rstrip()
             data = specimen.readlines()
+            board.reset_cells()
             board.rows_no = len(data)
             board.cells_in_row = len(data[0].rstrip())
             #board._init_cells(randomize=False)
