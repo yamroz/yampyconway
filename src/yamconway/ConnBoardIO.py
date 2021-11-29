@@ -1,4 +1,5 @@
 from yamconway.ConnectedBoard import ConnectedBoard
+from asciimatics import screen
 
 class ConnBoardIO:
     def __init__():

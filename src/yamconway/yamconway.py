@@ -2,6 +2,7 @@ from time import sleep
 from random import seed
 from enum import Enum
 from yamconway.ConnectedBoard import ConnectedBoard
+from yamconway.ConnBoardIO import 
 
 
 class SimulationHQ:
@@ -57,6 +58,10 @@ class SimulationHQ:
             sleep(delay)
         print('Stats:')
         print('Born {} Died {}'.format(self.stats.births, self.stats.deaths))
+
+    def run_simulation_with_asciimatics(self, turns:int, delay:int):
+        for _ in range(turns):
+            
 
     @staticmethod
     def print_board(board):
