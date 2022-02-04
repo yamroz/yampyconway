@@ -2,8 +2,9 @@ from time import sleep
 from random import seed
 from enum import Enum
 from yamconway.ConnectedBoard import ConnectedBoard
-from yamconway.ConnBoardIO import 
-
+from yamconway.ConnBoardIO import ConnBoardIO
+from asciimatics.screen import Screen
+from asciimatics.screen import ManagedScreen
 
 class SimulationHQ:
     ALIVE_CELL_CHAR = '#'
@@ -14,10 +15,12 @@ class SimulationHQ:
     presentation = None
     board1: ConnectedBoard = None
     board2: ConnectedBoard = None
+    asciimatics_sreen = None
 
     class PresentationType(Enum):
         PRETTY = 1
         NUMBERS = 2
+        ASCIIMATICS = 3
 
     def __init__(self, rows=20, cells_in_row=20, randomize=True, presentation=PresentationType.PRETTY):
         self.board1 = ConnectedBoard(
@@ -26,6 +29,8 @@ class SimulationHQ:
             rows_no=rows, cells_in_row=cells_in_row, randomize=False, name='board2')
         self.stats = SimulationHQ.YamConStats()
         self.presentation = presentation
+        if presentation == SimulationHQ.PresentationType.ASCIIMATICS:
+            self.asciimatics_sreen = Screen.open()
 
     class YamConStats:
         verbose = False
@@ -46,23 +51,28 @@ class SimulationHQ:
             print(f'born {self.births} died {self.deaths}')
 
     def run_simulation_with_console_output(self, turns, delay):
-        seed(1)
-        self.print_conboard_nbrs(self.board1)
+        seed(1)        
         print('*********** START ***********')
-        for _ in range(turns):
-            self.next_turn()
-            if self.presentation == self.PresentationType.PRETTY:
+        if self.presentation == self.PresentationType.PRETTY:
+            for _ in range(turns):
+                self.next_turn()
                 self.print_conboard_pretty(self.board1)
-            elif self.presentation == self.PresentationType.NUMBERS:
+                sleep(delay)
+        elif self.presentation == self.PresentationType.NUMBERS:
+            for _ in range(turns):
+                self.next_turn()
                 self.print_conboard_nbrs(self.board1)
-            sleep(delay)
+                sleep(delay)
+        elif self.presentation == self.PresentationType.ASCIIMATICS:
+            with ManagedScreen() as screen:
+                for _ in range(turns):
+                    self.next_turn()
+                    self.print_conboard_asciimatics(self.board1, screen)
+                    sleep(delay)
+
         print('Stats:')
         print('Born {} Died {}'.format(self.stats.births, self.stats.deaths))
-
-    def run_simulation_with_asciimatics(self, turns:int, delay:int):
-        for _ in range(turns):
-            
-
+         
     @staticmethod
     def print_board(board):
         for row in range(len(board)):
@@ -72,7 +82,7 @@ class SimulationHQ:
         print("=" * len(board.cells))
         print(f'{board.name} {board.count_alive_cells()} step {self.step}')
         for row in board.cells:
-            self._print_row_pretty(row)
+            print(self._print_row_pretty(row))
 
     def _print_row_pretty(self, row):
         row_repr = ""
@@ -81,7 +91,7 @@ class SimulationHQ:
                 row_repr = row_repr + self.ALIVE_CELL_CHAR
             else:
                 row_repr = row_repr + self.EMPTY_CELL_CHAR
-        print(row_repr)
+        return row_repr
 
     def print_conboard_nbrs(self, board: ConnectedBoard):
         print("=" * len(board.cells))
@@ -94,6 +104,13 @@ class SimulationHQ:
                 else:
                     row_repr = row_repr + self.EMPTY_CELL_CHAR
             print(row_repr)
+    
+    def print_conboard_asciimatics(self, board: ConnectedBoard, screen: Screen):
+        screen.print_at("=" * len(board.cells),0,0)
+        screen.print_at(f'{board.name} {board.count_alive_cells()} step {self.step}',0,1)
+        for row_index,row in enumerate(board.cells):
+            screen.print_at(self._print_row_pretty(row),0,row_index+2)
+        screen.refresh()
 
     def get_network_board(self):
         result = ""
@@ -117,7 +134,6 @@ class SimulationHQ:
         return result
 
     def update_conboard(self, source_board: ConnectedBoard, target_board: ConnectedBoard):
-        print(f'updating from {source_board.name} to {target_board.name}')
         for row_index, row in enumerate(source_board.cells):
             for cell_index, cell in enumerate(row):
                 alive_nbrs = cell.count_alive_neighbors()
