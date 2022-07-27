@@ -1,9 +1,13 @@
 from yamconway.ConnectedBoard import ConnectedBoard
-from asciimatics import screen
 
 class ConnBoardIO:
     def __init__():
         pass
+
+    @staticmethod
+    def print_board(board):
+        for row in range(len(board)):
+            print(board[row])
 
     @staticmethod
     def load_from_file(board : ConnectedBoard, path_to_file: str = None):

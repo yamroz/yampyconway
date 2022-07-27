@@ -1,7 +1,5 @@
-import array
 import os
 from random import choice
-from typing import Iterator
 
 
 class Cell:
