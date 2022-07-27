@@ -1,4 +1,4 @@
-from time import sleep
+from time import sleep, time
 from random import seed
 from enum import Enum
 from yamconway.ConnectedBoard import ConnectedBoard
@@ -30,7 +30,7 @@ class SimulationHQ:
             rows_no=rows, cells_in_row=cells_in_row, randomize=False, name='board2')
         self.stats = SimulationHQ.YamConStats()
         self.presentation = presentation
-        if presentation == SimulationHQ.PresentationType.ASCIIMATICS:
+        if presentation == SimulationHQ.PresentationType.ASCIIMATICS: # Should be moved to separate simulation class.
             self.asciimatics_sreen = Screen.open()
 
     def next_turn(self):
@@ -42,6 +42,17 @@ class SimulationHQ:
         verbose = False
         births = 0
         deaths = 0
+        sim_start_tmstpm = 0.0
+        sim_end_tmpstmp = 0.0
+        sim_duration = 0.0
+
+        def start_simulation_time(self):
+            from time import time
+            self.sim_start_tmstpm = time()
+        
+        def end_simulation_time(self):
+            self.sim_end_tmpstmp = time()
+            self.sim_duration = self.sim_end_tmpstmp - self.sim_start_tmstpm
 
         def cell_died(self):
             self.deaths = self.deaths + 1
@@ -56,7 +67,7 @@ class SimulationHQ:
         def _verbose(self):
             print(f'born {self.births} died {self.deaths}')
 
-    def run_simulation_with_console_output(self, turns, delay):
+    def run_simulation_with_console_output(self, turns, delay): # TODO refactor into inheritance
         seed(1)        
         print('*********** START ***********')
         if self.presentation == self.PresentationType.PRETTY:
@@ -75,6 +86,12 @@ class SimulationHQ:
                     self.next_turn()
                     self.print_conboard_asciimatics(self.board1, screen)
                     sleep(delay)
+        elif self.presentation == self.PresentationType.HEADLESS:
+            self.stats.start_simulation_time()
+            for _ in range (turns):
+                self.next_turn()
+            self.stats.end_simulation_time()
+            print(f"The simulation took {self.stats.sim_duration} seconds")
 
         print('Stats:')
         print('Born {} Died {}'.format(self.stats.births, self.stats.deaths))
