@@ -18,6 +18,7 @@ class SimulationHQ:
     asciimatics_sreen = None
 
     class PresentationType(Enum):
+        HEADLESS = 0
         PRETTY = 1
         NUMBERS = 2
         ASCIIMATICS = 3
