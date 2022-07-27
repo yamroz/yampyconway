@@ -32,6 +32,11 @@ class SimulationHQ:
         if presentation == SimulationHQ.PresentationType.ASCIIMATICS:
             self.asciimatics_sreen = Screen.open()
 
+    def next_turn(self):
+        self._update_conboard(self.board1, self.board2)
+        self.step += 1
+        self.board1, self.board2 = self.board2, self.board1
+
     class YamConStats:
         verbose = False
         births = 0
@@ -72,12 +77,7 @@ class SimulationHQ:
 
         print('Stats:')
         print('Born {} Died {}'.format(self.stats.births, self.stats.deaths))
-         
-    @staticmethod
-    def print_board(board):
-        for row in range(len(board)):
-            print(board[row])
-
+      
     def print_conboard_pretty(self, board: ConnectedBoard):
         print("=" * len(board.cells))
         print(f'{board.name} {board.count_alive_cells()} step {self.step}')
@@ -133,7 +133,10 @@ class SimulationHQ:
             print(row_repr)
         return result
 
-    def update_conboard(self, source_board: ConnectedBoard, target_board: ConnectedBoard):
+    def _update_conboard(self, source_board: ConnectedBoard, target_board: ConnectedBoard):
+        """
+        THE function - does all necessary operations to calculate next state of board.
+        """
         for row_index, row in enumerate(source_board.cells):
             for cell_index, cell in enumerate(row):
                 alive_nbrs = cell.count_alive_neighbors()
@@ -158,7 +161,4 @@ class SimulationHQ:
                         target_board.cells[row_index][cell_index].setAlive(
                             False)
 
-    def next_turn(self):
-        self.update_conboard(self.board1, self.board2)
-        self.step += 1
-        self.board1, self.board2 = self.board2, self.board1
+
