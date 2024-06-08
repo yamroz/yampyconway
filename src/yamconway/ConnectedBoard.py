@@ -13,7 +13,7 @@ class Cell:
             self.alive = False
         self.neighbors = []
 
-    def setAlive(self, alive: bool):
+    def setAlive(self, alive: bool) -> None: # TODO change to normal attribute access or property if needed
         self.alive = alive
 
     def count_alive_neighbors(self):
@@ -28,7 +28,7 @@ class ConnectedBoard:
         self.name = name
         self.cells_in_row = cells_in_row
         self.rows_no = rows_no
-        self.cells: Cell = []
+        self.rows: list[list[Cell]] = []
         self._make_cells(randomize)
         self._connect_neighbours()
 
@@ -36,15 +36,15 @@ class ConnectedBoard:
         """
         Deletes Cells collection and sets widtdh and height to 0
         """
-        self.cells: Cell = []
+        self.rows = []
         self.rows_no = 0
         self.cells_in_row = 0
 
     def _make_cells(self, randomize=True):
         for new_row_no in range(self.rows_no):
-            self.cells.append([])
+            self.rows.append([])
             for _ in range(self.cells_in_row):
-                self.cells[new_row_no].append(Cell(randomize))
+                self.rows[new_row_no].append(Cell(randomize))
 
     def _connect_neighbours(self) -> None:
         """
@@ -56,85 +56,85 @@ class ConnectedBoard:
         for row_idx in range(self.rows_no):
             for col_idx in range(self.cells_in_row):
                 # get neighbors for convenience
-                nbrs = self.cells[row_idx][col_idx].neighbors
+                nbrs = self.rows[row_idx][col_idx].neighbors
                 # lets firs take cells not on edges
                 if (row_idx > 0 and row_idx < self.rows_no - 1 and
                         col_idx > 0 and col_idx < self.cells_in_row - 1):
-                    nbrs.append(self.cells[row_idx-1][col_idx-1])  # left top
-                    nbrs.append(self.cells[row_idx-1][col_idx])  # top
-                    nbrs.append(self.cells[row_idx-1][col_idx+1])  # right top
-                    nbrs.append(self.cells[row_idx][col_idx-1])  # left
-                    nbrs.append(self.cells[row_idx][col_idx+1])  # right
-                    nbrs.append(self.cells[row_idx+1]
+                    nbrs.append(self.rows[row_idx-1][col_idx-1])  # left top
+                    nbrs.append(self.rows[row_idx-1][col_idx])  # top
+                    nbrs.append(self.rows[row_idx-1][col_idx+1])  # right top
+                    nbrs.append(self.rows[row_idx][col_idx-1])  # left
+                    nbrs.append(self.rows[row_idx][col_idx+1])  # right
+                    nbrs.append(self.rows[row_idx+1]
                                 [col_idx-1])  # left bottom
-                    nbrs.append(self.cells[row_idx+1][col_idx])  # bottom
-                    nbrs.append(self.cells[row_idx+1]
+                    nbrs.append(self.rows[row_idx+1][col_idx])  # bottom
+                    nbrs.append(self.rows[row_idx+1]
                                 [col_idx+1])  # right bottom
                 else:
                     # top row not corners
                     if row_idx == 0 and col_idx > 0 and col_idx < self.cells_in_row - 1:
-                        nbrs.append(self.cells[row_idx][col_idx-1])  # left
-                        nbrs.append(self.cells[row_idx][col_idx+1])  # right
-                        nbrs.append(self.cells[row_idx+1]
+                        nbrs.append(self.rows[row_idx][col_idx-1])  # left
+                        nbrs.append(self.rows[row_idx][col_idx+1])  # right
+                        nbrs.append(self.rows[row_idx+1]
                                     [col_idx-1])  # left bottom
-                        nbrs.append(self.cells[row_idx+1][col_idx])  # bottom
+                        nbrs.append(self.rows[row_idx+1][col_idx])  # bottom
                         # right bottom
-                        nbrs.append(self.cells[row_idx+1][col_idx+1])
+                        nbrs.append(self.rows[row_idx+1][col_idx+1])
                     # bottom row not corners
                     elif row_idx == self.rows_no - 1 and col_idx > 0 and col_idx < self.cells_in_row - 1:
-                        nbrs.append(self.cells[row_idx][col_idx-1])  # left
-                        nbrs.append(self.cells[row_idx-1]
+                        nbrs.append(self.rows[row_idx][col_idx-1])  # left
+                        nbrs.append(self.rows[row_idx-1]
                                     [col_idx-1])  # left top
-                        nbrs.append(self.cells[row_idx-1][col_idx])  # top
-                        nbrs.append(self.cells[row_idx-1]
+                        nbrs.append(self.rows[row_idx-1][col_idx])  # top
+                        nbrs.append(self.rows[row_idx-1]
                                     [col_idx+1])  # right top
-                        nbrs.append(self.cells[row_idx][col_idx+1])  # right
+                        nbrs.append(self.rows[row_idx][col_idx+1])  # right
                     # left edge not corners
                     elif col_idx == 0 and row_idx > 0 and row_idx < self.rows_no - 1:
-                        nbrs.append(self.cells[row_idx-1][col_idx])  # top
-                        nbrs.append(self.cells[row_idx-1]
+                        nbrs.append(self.rows[row_idx-1][col_idx])  # top
+                        nbrs.append(self.rows[row_idx-1]
                                     [col_idx+1])  # right top
-                        nbrs.append(self.cells[row_idx][col_idx+1])  # right
+                        nbrs.append(self.rows[row_idx][col_idx+1])  # right
                         # right bottom
-                        nbrs.append(self.cells[row_idx+1][col_idx+1])
-                        nbrs.append(self.cells[row_idx+1][col_idx])  # bottom
+                        nbrs.append(self.rows[row_idx+1][col_idx+1])
+                        nbrs.append(self.rows[row_idx+1][col_idx])  # bottom
                     # right edge not corners
                     elif col_idx == self.cells_in_row-1 and row_idx > 0 and row_idx < self.rows_no - 1:
-                        nbrs.append(self.cells[row_idx-1][col_idx])  # top
-                        nbrs.append(self.cells[row_idx-1]
+                        nbrs.append(self.rows[row_idx-1][col_idx])  # top
+                        nbrs.append(self.rows[row_idx-1]
                                     [col_idx-1])  # left top
-                        nbrs.append(self.cells[row_idx][col_idx-1])  # left
-                        nbrs.append(self.cells[row_idx+1]
+                        nbrs.append(self.rows[row_idx][col_idx-1])  # left
+                        nbrs.append(self.rows[row_idx+1]
                                     [col_idx-1])  # left bottom
-                        nbrs.append(self.cells[row_idx+1][col_idx])  # bottom
+                        nbrs.append(self.rows[row_idx+1][col_idx])  # bottom
                     # left top corner
                     elif row_idx == 0 and col_idx == 0:
-                        nbrs.append(self.cells[row_idx][col_idx+1])  # right
+                        nbrs.append(self.rows[row_idx][col_idx+1])  # right
                         # right bottom
-                        nbrs.append(self.cells[row_idx+1][col_idx+1])
-                        nbrs.append(self.cells[row_idx+1][col_idx])  # bottom
+                        nbrs.append(self.rows[row_idx+1][col_idx+1])
+                        nbrs.append(self.rows[row_idx+1][col_idx])  # bottom
                     # right top corner
                     elif row_idx == 0 and col_idx == self.cells_in_row-1:
-                        nbrs.append(self.cells[row_idx][col_idx-1])  # left
-                        nbrs.append(self.cells[row_idx+1]
+                        nbrs.append(self.rows[row_idx][col_idx-1])  # left
+                        nbrs.append(self.rows[row_idx+1]
                                     [col_idx-1])  # left bottom
-                        nbrs.append(self.cells[row_idx+1][col_idx])  # bottom
+                        nbrs.append(self.rows[row_idx+1][col_idx])  # bottom
                     # left bottom corner
                     elif row_idx == self.rows_no-1 and col_idx == 0:
-                        nbrs.append(self.cells[row_idx-1][col_idx])  # top
-                        nbrs.append(self.cells[row_idx-1]
+                        nbrs.append(self.rows[row_idx-1][col_idx])  # top
+                        nbrs.append(self.rows[row_idx-1]
                                     [col_idx+1])  # right top
-                        nbrs.append(self.cells[row_idx][col_idx+1])  # right
+                        nbrs.append(self.rows[row_idx][col_idx+1])  # right
                     # right bottom corner
                     elif row_idx == self.rows_no-1 and col_idx == self.cells_in_row-1:
-                        nbrs.append(self.cells[row_idx-1]
+                        nbrs.append(self.rows[row_idx-1]
                                     [col_idx-1])  # left top
-                        nbrs.append(self.cells[row_idx][col_idx-1])  # left
-                        nbrs.append(self.cells[row_idx-1][col_idx])  # top
+                        nbrs.append(self.rows[row_idx][col_idx-1])  # left
+                        nbrs.append(self.rows[row_idx-1][col_idx])  # top
 
     def count_alive_cells(self) -> int:
         res = 0
-        for row in self.cells:
+        for row in self.rows:
             for cell in row:
                 if cell.alive:
                     res += 1

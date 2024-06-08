@@ -1,2 +1,2 @@
 #! ./bin/sh
-docker build .
+docker build -t yamroz/yamconway:1 .

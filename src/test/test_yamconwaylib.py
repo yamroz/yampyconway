@@ -1,5 +1,5 @@
 import pytest
-from yamconway.yamconway import *
+from yamconway.SimulationHQ import *
 
 
 @pytest.fixture
@@ -9,8 +9,8 @@ def yamconway_default():
 
 
 def test_yamconway_boards_exist(yamconway_default: SimulationHQ):
-    assert yamconway_default.board1
-    assert yamconway_default.board2
+    assert yamconway_default.current_board
+    assert yamconway_default.future_board
 
 
 def test_yamconway_stats_zero(yamconway_default: SimulationHQ):

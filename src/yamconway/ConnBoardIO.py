@@ -21,14 +21,14 @@ class ConnBoardIO:
             board._make_cells(randomize=False)
             for row_idx, row in enumerate(data):
                 for char_idx, character in enumerate(row.rstrip()):
-                    board.cells[row_idx][char_idx].setAlive(
+                    board.rows[row_idx][char_idx].setAlive(
                         character != dead_marker)
 
     @staticmethod
     def save_to_file(board : ConnectedBoard, file_path_name:str):
         with open(file_path_name,'w') as output_file:
             output_file.write(board.EMPTY_CELL_CHAR)
-            for row in board.cells:
+            for row in board.rows:
                 row_to_write = ''
                 for cell in row:
                     if cell.alive:

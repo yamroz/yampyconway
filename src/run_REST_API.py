@@ -1,16 +1,16 @@
 from flask import Flask
 from flask_restful import Resource, Api
-from yamconway import YamConway
+from yamconway.SimulationHQ import SimulationHQ
 
 app = Flask(__name__)
 api = Api(app)
-yc = YamConway()
+yc = SimulationHQ()
 
 
 class BoardState(Resource):
     def get(self):
         yc.next_turn()
-        return yc.board1
+        return yc.get_network_board()
 
 
 class GetNetworkBoard(Resource):
@@ -27,8 +27,8 @@ class NextTurn(Resource):
 class Reset(Resource):
     def get(self):
         global yc
-        yc = YamConway()
-        return yc.board1
+        yc = SimulationHQ()
+        return yc.current_board
 
 
 api.add_resource(GetNetworkBoard, '/networkboardstate')  # Route_1
