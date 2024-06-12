@@ -25,7 +25,7 @@ class SimulationHQ:
     future_board: ConnectedBoard = None
     asciimatics_sreen = None
 
-    def __init__(self, rows: int=20, cells_in_row: int=20, randomize: bool=True, presentation: PresentationType=PresentationType.ASCIIMATICS) -> None:
+    def __init__(self, rows: int=20, cells_in_row: int=20, randomize: bool=True, presentation: PresentationType=PresentationType.HEADLESS) -> None:
         logging.info(f'Initializing Simulation with presentation type: {presentation.value}.')
         self.current_board = ConnectedBoard(
             rows_no=rows, cells_in_row=cells_in_row, randomize=True, name='board1')
@@ -131,9 +131,11 @@ class SimulationHQ:
         screen.refresh()
 
     def get_network_board(self) -> str:
-        result = ""
+        result = ''
         for row in self.current_board.rows:
-            result.join(self._get_row_cells_ascii(row))
+            row_repr = self._get_row_cells_ascii(row)
+            row_repr += '<BR>'
+            result += row_repr
         return result
 
     def _update_conboard(self, source_board: ConnectedBoard, target_board: ConnectedBoard):

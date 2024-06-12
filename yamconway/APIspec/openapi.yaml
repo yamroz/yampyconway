@@ -1,0 +1,58 @@
+openapi: '3.0.2'
+info:
+  title: yampyconway API
+  version: '0.1'
+servers:
+  - url: http://localhost:5000/
+paths:
+  /boardstate:
+    get:
+      responses:
+        '200':
+          description: Returns board ready to display in browser.
+          content:
+            text/html:
+              schema:
+                type: string
+  /about:
+    get:
+      responses:
+        '200':
+          description: Returns satic string with name and version.
+          content:
+            application/json:
+              schema:
+                type: string
+                example:
+                  about: yamconway server V0.1
+  /reset:
+    post:
+      parameters:
+        - in: query
+          name: rows
+          schema:
+            type: integer
+          description: Number of rows in simulation.
+        - in: query
+          name: columns
+          schema:
+            type: integer
+          description: Number of cells in every row - which translates into columns.
+      responses:
+        '200':
+          description: The simulation got reset with default params.
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Simulation reset.
+  /nextturn:
+    post:
+      responses:
+        '200':
+          description: Next turn calculated correctly and ready to download.
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Turn X calculated correctly.

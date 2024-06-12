@@ -1,8 +1,14 @@
 FROM python
 
-RUN pip install asciimatics
-RUN mkdir -p /home/app/src
+EXPOSE 5002
 
-COPY ./src /home/app/src
+RUN mkdir -p /home/yamconway
 
-CMD ["python3","/home/app/src/run.py"]
+COPY ./requirements.txt /home/yamconway
+RUN pip install -r /home/yamconway/requirements.txt
+
+COPY ./yamconway /home/yamconway/yamconway
+COPY ./run.py /home/yamconway
+COPY ./run_REST_API.py /home/yamconway
+
+CMD ["python3","/home/yamconway/run_REST_API.py"]
