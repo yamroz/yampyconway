@@ -10,6 +10,17 @@ class ConnBoardIO:
             print(board[row])
 
     @staticmethod
+    def board_to_string(board: ConnectedBoard) -> str:
+        board_str = ''
+        for row in board.rows:
+            for cell in row:
+                if cell.alive:
+                    board_str += '#'
+                else:
+                    board_str += '-'               
+        return board_str
+
+    @staticmethod
     def load_from_file(board : ConnectedBoard, path_to_file: str = None):
         with open(path_to_file) as specimen:
             dead_marker = specimen.readline().rstrip()

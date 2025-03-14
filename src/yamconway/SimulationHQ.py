@@ -23,6 +23,7 @@ class SimulationHQ:
     presentation: PresentationType = None
     current_board: ConnectedBoard = None
     future_board: ConnectedBoard = None
+    even_board_for_stability_detection: ConnectedBoard = None
     asciimatics_sreen = None
 
     def __init__(self, rows: int=20, cells_in_row: int=20, randomize: bool=True, presentation: PresentationType=PresentationType.ASCIIMATICS) -> None:
@@ -38,6 +39,12 @@ class SimulationHQ:
 
     def next_turn(self) -> None:
         self._update_conboard(self.current_board, self.future_board)
+        
+        if self.step % 2 == 0:
+            self.even_board_for_stability_detection = ConnBoardIO.board_to_string(self.current_board)
+        elif ConnBoardIO.board_to_string(self.future_board) == self.even_board_for_stability_detection:
+            raise Exception('Board is stable')
+        
         self.step += 1
         self.current_board, self.future_board = self.future_board, self.current_board
 
@@ -73,11 +80,16 @@ class SimulationHQ:
     def run_simulation_with_console_output(self, turns: int=1000, delay_sec: float=0.5): # TODO refactor into inheritance
         seed(1)        
         logging.info('*********** START ***********')
+        self.stats.start_simulation_time()
         if self.presentation == PresentationType.PRETTY:
             for _ in range(turns):
-                self.next_turn()
-                self.print_conboard_pretty(self.current_board)
-                sleep(delay_sec)
+                try:
+                    self.next_turn()
+                    self.print_conboard_pretty(self.current_board)
+                    sleep(delay_sec)
+                except Exception as e:
+                    print(f"Simulation ended after {self.step} turns")
+                    break
         elif self.presentation == PresentationType.NUMBERS:
             for _ in range(turns):
                 self.next_turn()
@@ -86,17 +98,21 @@ class SimulationHQ:
         elif self.presentation == PresentationType.ASCIIMATICS:
             with ManagedScreen() as screen:
                 for _ in range(turns):
-                    self.next_turn()
-                    self.print_conboard_asciimatics(self.current_board, screen)
-                    sleep(delay_sec)
+                    try:
+                        self.next_turn()
+                        self.print_conboard_asciimatics(self.current_board, screen)
+                        sleep(delay_sec)
+                    except Exception as e:
+                        print(f"Simulation ended after {self.step} turns")
+                        break
         elif self.presentation == PresentationType.HEADLESS:
-            self.stats.start_simulation_time()
             for _ in range (turns):
                 self.next_turn()
-            self.stats.end_simulation_time()
-            print(f"The simulation took {self.stats.sim_duration} seconds")
-
+        self.stats.end_simulation_time()
+        
         print('Stats:')
+        print(f'Turns passed: {self.step}')
+        print(f"The simulation took {self.stats.sim_duration} seconds")
         print('Born {} Died {}'.format(self.stats.births, self.stats.deaths))
       
     def print_conboard_pretty(self, board: ConnectedBoard) -> None:
@@ -163,3 +179,14 @@ class SimulationHQ:
                     else:
                         target_board.rows[row_index][cell_index].setAlive(
                             False)
+
+    def is_stable(self, turns: int) -> bool:
+        """
+        Checks if the board is stable for given number of turns.
+        """
+        seed(1)
+        for _ in range(turns):
+            self.next_turn()
+            if self.current_board == self.future_board:
+                return True
+        return False

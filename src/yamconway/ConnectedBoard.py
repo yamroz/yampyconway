@@ -11,7 +11,7 @@ class Cell:
             self.alive = choice([True, False])
         else:
             self.alive = False
-        self.neighbors = []
+        self.neighbors: list[Cell] = []
 
     def setAlive(self, alive: bool) -> None: # TODO change to normal attribute access or property if needed
         self.alive = alive
