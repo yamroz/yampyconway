@@ -5,6 +5,7 @@ from yamconway.ConnectedBoard import ConnectedBoard, Cell
 from yamconway.ConnBoardIO import ConnBoardIO
 from asciimatics.screen import Screen
 from asciimatics.screen import ManagedScreen
+from yamconway.settings import ALIVE_CELL_CHAR, EMPTY_CELL_CHAR, NR_OF_NBRS_TO_STARVE, NR_OF_NBRS_TO_CREATE
 
 import logging
 
@@ -15,15 +16,11 @@ class PresentationType(Enum):
         ASCIIMATICS = "asciimatics"
 
 class SimulationHQ:
-    ALIVE_CELL_CHAR = '#'
-    EMPTY_CELL_CHAR = '-'
-    NR_OF_NBRS_TO_STARVE = 2
-    NR_OF_NBRS_TO_CREATE = 3
     step = 0
-    presentation: PresentationType = None
-    current_board: ConnectedBoard = None
-    future_board: ConnectedBoard = None
-    even_board_for_stability_detection: ConnectedBoard = None
+    # presentation: PresentationType = None
+    # current_board: ConnectedBoard = None
+    # future_board: ConnectedBoard = None
+    # even_board_for_stability_detection: ConnectedBoard = None
     asciimatics_sreen = None
 
     def __init__(self, rows: int=20, cells_in_row: int=20, randomize: bool=True, presentation: PresentationType=PresentationType.ASCIIMATICS) -> None:
@@ -125,7 +122,7 @@ class SimulationHQ:
         """
         Returns row as a string made from alive and empty cell representations.
         """
-        return ''.join([self.ALIVE_CELL_CHAR if cell.alive else self.EMPTY_CELL_CHAR for cell in row ])
+        return ''.join([ALIVE_CELL_CHAR if cell.alive else EMPTY_CELL_CHAR for cell in row ])
 
     def print_conboard_nbrs(self, board: ConnectedBoard):
         print("=" * len(board.rows))
@@ -136,7 +133,7 @@ class SimulationHQ:
                 if cell.alive:
                     row_repr = row_repr + str(cell.count_alive_neighbors())
                 else:
-                    row_repr = row_repr + self.EMPTY_CELL_CHAR
+                    row_repr = row_repr + EMPTY_CELL_CHAR
             print(row_repr)
     
     def print_conboard_asciimatics(self, board: ConnectedBoard, screen: Screen):
@@ -160,11 +157,11 @@ class SimulationHQ:
             for cell_index, cell in enumerate(row):
                 alive_nbrs = cell.count_alive_neighbors()
                 if cell.alive:
-                    if alive_nbrs < self.NR_OF_NBRS_TO_STARVE:
+                    if alive_nbrs < NR_OF_NBRS_TO_STARVE:
                         target_board.rows[row_index][cell_index].setAlive(
                             False)
                         self.stats.cell_died()
-                    elif alive_nbrs >= self.NR_OF_NBRS_TO_STARVE and alive_nbrs <= self.NR_OF_NBRS_TO_CREATE:
+                    elif alive_nbrs >= NR_OF_NBRS_TO_STARVE and alive_nbrs <= NR_OF_NBRS_TO_CREATE:
                         target_board.rows[row_index][cell_index].setAlive(
                             True)
                     else:
@@ -172,7 +169,7 @@ class SimulationHQ:
                             False)
                         self.stats.cell_died()
                 else:
-                    if alive_nbrs == self.NR_OF_NBRS_TO_CREATE:
+                    if alive_nbrs == NR_OF_NBRS_TO_CREATE:
                         target_board.rows[row_index][cell_index].setAlive(
                             True)
                         self.stats.cell_was_born()

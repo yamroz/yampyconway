@@ -3,7 +3,7 @@ from random import choice
 
 
 class Cell:
-    neighbors = None
+    # neighbors = None
     alive: bool = False
 
     def __init__(self, randomize=True):
