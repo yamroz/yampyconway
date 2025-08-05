@@ -1,0 +1,31 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "yamconway"
+version = "0.1.0"
+authors = [
+    { name = "YamroZ", email = "unknown@example.com" }
+]
+
+description = "A Conway's Game of Life implementation"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+dependencies = [
+    "asciimatics>=1.18.0",
+    "rich>=13.3.2"
+]
+
+[project.scripts]
+yamconway = "src.run:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/yamconway"]
+

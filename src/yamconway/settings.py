@@ -4,13 +4,13 @@ from dotenv import load_dotenv
 
 # Load environment variables from .env file
 BASE_DIR = Path(__file__).resolve().parent.parent
-dotenv_path = BASE_DIR / '.env'
+dotenv_path = BASE_DIR / ".env"
 load_dotenv(dotenv_path)
 
-ALIVE_CELL_CHAR = os.getenv('ALIVE_CELL_CHAR', '#')
-EMPTY_CELL_CHAR = os.getenv('EMPTY_CELL_CHAR', ' ')
-NR_OF_NBRS_TO_STARVE: int = int(os.getenv('NR_OF_NBRS_TO_STARVE', 2))
-NR_OF_NBRS_TO_CREATE: int = int(os.getenv('NR_OF_NBRS_TO_CREATE', 3))
+ALIVE_CELL_CHAR = os.getenv("ALIVE_CELL_CHAR", "#")
+EMPTY_CELL_CHAR = os.getenv("EMPTY_CELL_CHAR", " ")
+NR_OF_NBRS_TO_STARVE: int = int(os.getenv("NR_OF_NBRS_TO_STARVE", 2))
+NR_OF_NBRS_TO_CREATE: int = int(os.getenv("NR_OF_NBRS_TO_CREATE", 3))
 
 # Example settings
 # SECRET_KEY = os.getenv('SECRET_KEY', 'your-default-secret-key')
