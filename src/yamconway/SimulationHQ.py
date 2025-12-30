@@ -13,6 +13,7 @@ from yamconway.settings import (
 )
 
 import logging
+from yamconway.exceptions.ExceptionBoardStable import ExceptionBoardStable
 
 
 class PresentationType(Enum):
@@ -56,6 +57,12 @@ class SimulationHQ:
     def next_turn(self) -> None:
         self._update_conboard(self.current_board, self.future_board)
 
+        self.check_if_board_is_stable()
+
+        self.step += 1
+        self.current_board, self.future_board = self.future_board, self.current_board
+
+    def check_if_board_is_stable(self):
         if self.step % 2 == 0:
             self.even_board_for_stability_detection = ConnBoardIO.board_to_string(
                 self.current_board
@@ -64,10 +71,7 @@ class SimulationHQ:
             ConnBoardIO.board_to_string(self.future_board)
             == self.even_board_for_stability_detection
         ):
-            raise Exception("Board is stable")
-
-        self.step += 1
-        self.current_board, self.future_board = self.future_board, self.current_board
+            raise ExceptionBoardStable()
 
     class YamConStats:
         verbose = False
@@ -207,14 +211,3 @@ class SimulationHQ:
                         self.stats.cell_was_born()
                     else:
                         target_board.rows[row_index][cell_index].setAlive(False)
-
-    def is_stable(self, turns: int) -> bool:
-        """
-        Checks if the board is stable for given number of turns.
-        """
-        seed(1)
-        for _ in range(turns):
-            self.next_turn()
-            if self.current_board == self.future_board:
-                return True
-        return False

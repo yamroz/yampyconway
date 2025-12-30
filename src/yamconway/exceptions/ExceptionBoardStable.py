@@ -1,0 +1,2 @@
+class ExceptionBoardStable(Exception):
+    pass
