@@ -11,7 +11,7 @@ authors = [
 
 description = "A Conway's Game of Life implementation"
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.11"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
@@ -19,12 +19,17 @@ classifiers = [
 ]
 
 dependencies = [
-    "asciimatics>=1.18.0",
-    "rich>=13.3.2"
+    "asciimatics>=1.13.0",
+    "rich>=13.3.2",
+    "Flask==2.2.2",
+    "Flask_RESTful>0.3.8",
+    "pytest",
+    "Werkzeug==2.2.2",
+    "python-dotenv==1.1.1"
 ]
 
 [project.scripts]
-yamconway = "src.run:main"
+yamconway = "yamconway.run:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/yamconway"]
