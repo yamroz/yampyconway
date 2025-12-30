@@ -5,39 +5,67 @@ from yamconway.ConnectedBoard import ConnectedBoard, Cell
 from yamconway.ConnBoardIO import ConnBoardIO
 from asciimatics.screen import Screen
 from asciimatics.screen import ManagedScreen
+from yamconway.settings import (
+    ALIVE_CELL_CHAR,
+    EMPTY_CELL_CHAR,
+    NR_OF_NBRS_TO_STARVE,
+    NR_OF_NBRS_TO_CREATE,
+)
 
 import logging
 
+
 class PresentationType(Enum):
-        HEADLESS = "headless"
-        PRETTY = "pretty"
-        NUMBERS = "numbers"
-        ASCIIMATICS = "asciimatics"
+    HEADLESS = "headless"
+    PRETTY = "pretty"
+    NUMBERS = "numbers"
+    ASCIIMATICS = "asciimatics"
+
 
 class SimulationHQ:
-    ALIVE_CELL_CHAR = '#'
-    EMPTY_CELL_CHAR = '-'
-    NR_OF_NBRS_TO_STARVE = 2
-    NR_OF_NBRS_TO_CREATE = 3
     step = 0
-    presentation: PresentationType = None
-    current_board: ConnectedBoard = None
-    future_board: ConnectedBoard = None
+    # presentation: PresentationType = None
+    # current_board: ConnectedBoard = None
+    # future_board: ConnectedBoard = None
+    # even_board_for_stability_detection: ConnectedBoard = None
     asciimatics_sreen = None
 
-    def __init__(self, rows: int=20, cells_in_row: int=20, randomize: bool=True, presentation: PresentationType=PresentationType.ASCIIMATICS) -> None:
-        logging.info(f'Initializing Simulation with presentation type: {presentation.value}.')
+    def __init__(
+        self,
+        rows: int = 20,
+        cells_in_row: int = 20,
+        randomize: bool = True,
+        presentation: PresentationType = PresentationType.ASCIIMATICS,
+    ) -> None:
+        logging.info(
+            f"Initializing Simulation with presentation type: {presentation.value}."
+        )
         self.current_board = ConnectedBoard(
-            rows_no=rows, cells_in_row=cells_in_row, randomize=True, name='board1')
+            rows_no=rows, cells_in_row=cells_in_row, randomize=True, name="board1"
+        )
         self.future_board = ConnectedBoard(
-            rows_no=rows, cells_in_row=cells_in_row, randomize=False, name='board2')
+            rows_no=rows, cells_in_row=cells_in_row, randomize=False, name="board2"
+        )
         self.stats = SimulationHQ.YamConStats()
         self.presentation = presentation
-        if presentation == PresentationType.ASCIIMATICS: # Should be moved to separate simulation class.
+        if (
+            presentation == PresentationType.ASCIIMATICS
+        ):  # Should be moved to separate simulation class.
             self.asciimatics_sreen = Screen.open()
 
     def next_turn(self) -> None:
         self._update_conboard(self.current_board, self.future_board)
+
+        if self.step % 2 == 0:
+            self.even_board_for_stability_detection = ConnBoardIO.board_to_string(
+                self.current_board
+            )
+        elif (
+            ConnBoardIO.board_to_string(self.future_board)
+            == self.even_board_for_stability_detection
+        ):
+            raise Exception("Board is stable")
+
         self.step += 1
         self.current_board, self.future_board = self.future_board, self.current_board
 
@@ -51,8 +79,9 @@ class SimulationHQ:
 
         def start_simulation_time(self):
             from time import time
+
             self.sim_start_tmstpm = time()
-        
+
         def end_simulation_time(self):
             self.sim_end_tmpstmp = time()
             self.sim_duration = self.sim_end_tmpstmp - self.sim_start_tmstpm
@@ -68,16 +97,23 @@ class SimulationHQ:
                 self._verbose()
 
         def _verbose(self):
-            print(f'born {self.births} died {self.deaths}')
+            print(f"born {self.births} died {self.deaths}")
 
-    def run_simulation_with_console_output(self, turns: int=1000, delay_sec: float=0.5): # TODO refactor into inheritance
-        seed(1)        
-        logging.info('*********** START ***********')
+    def run_simulation_with_console_output(
+        self, turns: int = 1000, delay_sec: float = 0.5
+    ):  # TODO refactor into inheritance
+        seed(1)
+        logging.info("*********** START ***********")
+        self.stats.start_simulation_time()
         if self.presentation == PresentationType.PRETTY:
             for _ in range(turns):
-                self.next_turn()
-                self.print_conboard_pretty(self.current_board)
-                sleep(delay_sec)
+                try:
+                    self.next_turn()
+                    self.print_conboard_pretty(self.current_board)
+                    sleep(delay_sec)
+                except Exception as e:
+                    print(f"Simulation ended after {self.step} turns")
+                    break
         elif self.presentation == PresentationType.NUMBERS:
             for _ in range(turns):
                 self.next_turn()
@@ -86,22 +122,26 @@ class SimulationHQ:
         elif self.presentation == PresentationType.ASCIIMATICS:
             with ManagedScreen() as screen:
                 for _ in range(turns):
-                    self.next_turn()
-                    self.print_conboard_asciimatics(self.current_board, screen)
-                    sleep(delay_sec)
+                    try:
+                        self.next_turn()
+                        self.print_conboard_asciimatics(self.current_board, screen)
+                        sleep(delay_sec)
+                    except Exception as e:
+                        print(f"Simulation ended after {self.step} turns")
+                        break
         elif self.presentation == PresentationType.HEADLESS:
-            self.stats.start_simulation_time()
-            for _ in range (turns):
+            for _ in range(turns):
                 self.next_turn()
-            self.stats.end_simulation_time()
-            print(f"The simulation took {self.stats.sim_duration} seconds")
+        self.stats.end_simulation_time()
 
-        print('Stats:')
-        print('Born {} Died {}'.format(self.stats.births, self.stats.deaths))
-      
+        print("Stats:")
+        print(f"Turns passed: {self.step}")
+        print(f"The simulation took {self.stats.sim_duration} seconds")
+        print("Born {} Died {}".format(self.stats.births, self.stats.deaths))
+
     def print_conboard_pretty(self, board: ConnectedBoard) -> None:
         print("=" * len(board.rows))
-        print(f'{board.name} {board.count_alive_cells()} step {self.step}')
+        print(f"{board.name} {board.count_alive_cells()} step {self.step}")
         for row in board.rows:
             print(self._get_row_cells_ascii(row))
 
@@ -109,25 +149,29 @@ class SimulationHQ:
         """
         Returns row as a string made from alive and empty cell representations.
         """
-        return ''.join([self.ALIVE_CELL_CHAR if cell.alive else self.EMPTY_CELL_CHAR for cell in row ])
+        return "".join(
+            [ALIVE_CELL_CHAR if cell.alive else EMPTY_CELL_CHAR for cell in row]
+        )
 
     def print_conboard_nbrs(self, board: ConnectedBoard):
         print("=" * len(board.rows))
-        print(f'{board.name} {board.count_alive_cells()} step {self.step}')
+        print(f"{board.name} {board.count_alive_cells()} step {self.step}")
         for row in board.rows:
             row_repr = ""
             for cell in row:
                 if cell.alive:
                     row_repr = row_repr + str(cell.count_alive_neighbors())
                 else:
-                    row_repr = row_repr + self.EMPTY_CELL_CHAR
+                    row_repr = row_repr + EMPTY_CELL_CHAR
             print(row_repr)
-    
+
     def print_conboard_asciimatics(self, board: ConnectedBoard, screen: Screen):
-        screen.print_at("=" * len(board.rows),0,0)
-        screen.print_at(f'{board.name} {board.count_alive_cells()} step {self.step}',0,1)
-        for row_index,row in enumerate(board.rows):
-            screen.print_at(self._get_row_cells_ascii(row),0,row_index+2)
+        screen.print_at("=" * len(board.rows), 0, 0)
+        screen.print_at(
+            f"{board.name} {board.count_alive_cells()} step {self.step}", 0, 1
+        )
+        for row_index, row in enumerate(board.rows):
+            screen.print_at(self._get_row_cells_ascii(row), 0, row_index + 2)
         screen.refresh()
 
     def get_network_board(self) -> str:
@@ -136,7 +180,9 @@ class SimulationHQ:
             result.join(self._get_row_cells_ascii(row))
         return result
 
-    def _update_conboard(self, source_board: ConnectedBoard, target_board: ConnectedBoard):
+    def _update_conboard(
+        self, source_board: ConnectedBoard, target_board: ConnectedBoard
+    ):
         """
         THE function - does all necessary operations to calculate next state of board.
         """
@@ -144,22 +190,31 @@ class SimulationHQ:
             for cell_index, cell in enumerate(row):
                 alive_nbrs = cell.count_alive_neighbors()
                 if cell.alive:
-                    if alive_nbrs < self.NR_OF_NBRS_TO_STARVE:
-                        target_board.rows[row_index][cell_index].setAlive(
-                            False)
+                    if alive_nbrs < NR_OF_NBRS_TO_STARVE:
+                        target_board.rows[row_index][cell_index].setAlive(False)
                         self.stats.cell_died()
-                    elif alive_nbrs >= self.NR_OF_NBRS_TO_STARVE and alive_nbrs <= self.NR_OF_NBRS_TO_CREATE:
-                        target_board.rows[row_index][cell_index].setAlive(
-                            True)
+                    elif (
+                        alive_nbrs >= NR_OF_NBRS_TO_STARVE
+                        and alive_nbrs <= NR_OF_NBRS_TO_CREATE
+                    ):
+                        target_board.rows[row_index][cell_index].setAlive(True)
                     else:
-                        target_board.rows[row_index][cell_index].setAlive(
-                            False)
+                        target_board.rows[row_index][cell_index].setAlive(False)
                         self.stats.cell_died()
                 else:
-                    if alive_nbrs == self.NR_OF_NBRS_TO_CREATE:
-                        target_board.rows[row_index][cell_index].setAlive(
-                            True)
+                    if alive_nbrs == NR_OF_NBRS_TO_CREATE:
+                        target_board.rows[row_index][cell_index].setAlive(True)
                         self.stats.cell_was_born()
                     else:
-                        target_board.rows[row_index][cell_index].setAlive(
-                            False)
+                        target_board.rows[row_index][cell_index].setAlive(False)
+
+    def is_stable(self, turns: int) -> bool:
+        """
+        Checks if the board is stable for given number of turns.
+        """
+        seed(1)
+        for _ in range(turns):
+            self.next_turn()
+            if self.current_board == self.future_board:
+                return True
+        return False
