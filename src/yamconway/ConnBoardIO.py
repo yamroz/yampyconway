@@ -1,20 +1,25 @@
-from yamconway.ConnectedBoard import ConnectedBoard
+from yamconway.ConnectedBoard import ConnectedBoard,Cell
 from yamconway.settings import ALIVE_CELL_CHAR, EMPTY_CELL_CHAR
+from os import linesep
 
 
 class ConnBoardIO:
 
     @staticmethod
-    def print_board(board):
-        for row in range(len(board)):
-            print(board[row])
+    def get_row_cells_ascii(row: list[Cell]) -> str:
+        """
+        Returns row as a string made from alive and empty cell representations.
+        """
+        return "".join(
+            [ALIVE_CELL_CHAR if cell.alive else EMPTY_CELL_CHAR for cell in row]
+        )
 
     @staticmethod
     def board_to_string(board: ConnectedBoard) -> str:
         board_str: str = ""
         for row in board.rows:
-            for cell in row:
-                board_str += ALIVE_CELL_CHAR if cell.alive else EMPTY_CELL_CHAR
+            board_str += ConnBoardIO.get_row_cells_ascii(row)
+            board_str += linesep
         return board_str
 
     @staticmethod

@@ -55,7 +55,7 @@ class SimulationHQ:
             self.asciimatics_sreen = Screen.open()
 
     def next_turn(self) -> None:
-        self._update_conboard(self.current_board, self.future_board)
+        self._update_connboard(self.current_board, self.future_board)
 
         self.check_if_board_is_stable()
 
@@ -147,15 +147,7 @@ class SimulationHQ:
         print("=" * len(board.rows))
         print(f"{board.name} {board.count_alive_cells()} step {self.step}")
         for row in board.rows:
-            print(self._get_row_cells_ascii(row))
-
-    def _get_row_cells_ascii(self, row: list[Cell]) -> str:
-        """
-        Returns row as a string made from alive and empty cell representations.
-        """
-        return "".join(
-            [ALIVE_CELL_CHAR if cell.alive else EMPTY_CELL_CHAR for cell in row]
-        )
+            print(ConnBoardIO.get_row_cells_ascii(row))
 
     def print_conboard_nbrs(self, board: ConnectedBoard):
         print("=" * len(board.rows))
@@ -175,16 +167,16 @@ class SimulationHQ:
             f"{board.name} {board.count_alive_cells()} step {self.step}", 0, 1
         )
         for row_index, row in enumerate(board.rows):
-            screen.print_at(self._get_row_cells_ascii(row), 0, row_index + 2)
+            screen.print_at(ConnBoardIO.get_row_cells_ascii(row), 0, row_index + 2)
         screen.refresh()
 
     def get_network_board(self) -> str:
         result = ""
         for row in self.current_board.rows:
-            result.join(self._get_row_cells_ascii(row))
+            result.join(ConnBoardIO.get_row_cells_ascii(row))
         return result
 
-    def _update_conboard(
+    def _update_connboard(
         self, source_board: ConnectedBoard, target_board: ConnectedBoard
     ):
         """
