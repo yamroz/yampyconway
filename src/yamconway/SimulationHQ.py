@@ -218,3 +218,6 @@ class SimulationHQ:
             if self.current_board == self.future_board:
                 return True
         return False
+    
+    def get_version(self) -> str:
+        return '0.1'
